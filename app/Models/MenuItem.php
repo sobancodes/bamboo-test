@@ -8,5 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class MenuItem extends Model
 {
+    public function withoutPostProcessChildren()
+    {
+        return $this->hasMany(MenuItem::class, 'parent_id')->with('children');
+    }
 
+    public function children()
+    {
+        return $this->hasMany(MenuItem::class, 'parent_id');
+    }
 }

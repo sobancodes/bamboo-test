@@ -92,7 +92,23 @@ class MenuController extends BaseController
     ]
      */
 
-    public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+    public function getMenuItems()
+    {
+        // return MenuItem::with('withoutPostProcessChildren')->get();
+
+        $items = MenuItem::whereNull('parent_id')->with('children')->get();
+        
+        return $this->createRecursiveMenuItems($items, $items->count());
+    }
+
+    private function createRecursiveMenuItems($menuItems, $count)
+    {
+        foreach ($menuItems as &$menuItem) {
+            $menuItem['children'] = $menuItem->children;
+
+            $this->createRecursiveMenuItems($menuItem->children, count($menuItem->children));
+        }
+
+        return $menuItems;
     }
 }
